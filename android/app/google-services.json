@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1025254909622",
+    "firebase_url": "https://hulapi-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "hulapi",
+    "storage_bucket": "hulapi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025254909622:android:fde80a65a779e6cd52e817",
+        "android_client_info": {
+          "package_name": "com.example.basic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDE41nhR53RLRuxk40_mHs43DIAw32dPh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
