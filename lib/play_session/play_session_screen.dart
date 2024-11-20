@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:basic/Components/cust_fontstyle.dart';
+import 'package:basic/game_internals/level_state.dart';
+import 'package:basic/play_session/game_widget.dart';
 import '../Components/cust_drawer.dart';
 import '../Components/cust_showdialog.dart';
 import '../helpers/app_init.dart';
@@ -15,14 +17,11 @@ import '../level_selection/levels.dart';
 import '../player_progress/player_progress.dart';
 import '../style/confetti.dart';
 import 'FUNCT/play_session_controller.dart';
-import 'game_widget.dart';
 
 class PlaySessionScreen extends StatefulWidget {
   final GameLevel level;
   final String playerId;
-
   const PlaySessionScreen(this.level, this.playerId, {super.key});
-
   @override
   State<PlaySessionScreen> createState() => _PlaySessionScreenState();
 }
@@ -30,13 +29,10 @@ class PlaySessionScreen extends StatefulWidget {
 class _PlaySessionScreenState extends State<PlaySessionScreen>
     with Application {
   static final _log = Logger('PlaySessionScreen');
-
   static const _celebrationDuration = Duration(milliseconds: 2000);
   static const _preCelebrationDuration = Duration(milliseconds: 500);
-
   bool _duringCelebration = false;
   late DateTime _startOfPlay;
-
   @override
   void initState() {
     super.initState();
@@ -46,12 +42,6 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    final controller =
-        Provider.of<PlaySessionController>(context, listen: false);
-
-    controller.fetchPlayerData(
-        widget.playerId); // here i want to passed the player id
   }
 
   @override
@@ -62,6 +52,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
         builder: (context, playSessionController, child) {
           return Scaffold(
             appBar: AppBar(
+              elevation: 5,
               leading: Builder(
                 builder: (BuildContext context) {
                   return IconButton(
@@ -70,11 +61,10 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
                   );
                 },
               ),
-              elevation: 0,
               iconTheme: IconThemeData(color: AppColor().white),
-              backgroundColor: Colors.blueGrey,
+              backgroundColor: Application().color.blue,
               title: CustFontstyle(
-                label: 'LEVEL ${widget.level.number}',
+                label: 'ANTAS ${widget.level.number}',
                 fontcolor: AppColor().white,
                 fontsize: 17,
                 fontweight: FontWeight.w500,
@@ -120,7 +110,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
                     opacity: 0.5,
                     duration: Duration(milliseconds: 500),
                     child: Image.asset(
-                      AppImage().back,
+                      Application().image.BACK,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -148,28 +138,31 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
   Future<void> _playerWon() async {
     _log.info('Level ${widget.level.number} won');
 
+    // Update player's progress
     final score = Score(
       widget.level.number,
       widget.level.difficulty,
       DateTime.now().difference(_startOfPlay),
     );
+    context.read<PlayerProgress>().setLevelReached(widget.level.number);
 
-    final playerProgress = context.read<PlayerProgress>();
-    playerProgress.setLevelReached(widget.level.number);
-
+    // Add a pre-celebration delay
     await Future<void>.delayed(_preCelebrationDuration);
     if (!mounted) return;
 
+    // Trigger celebration
     setState(() {
       _duringCelebration = true;
     });
 
-    final audioController = context.read<AudioController>();
-    audioController.playSfx(SfxType.congrats);
+    // Play victory sound
+    context.read<AudioController>().playSfx(SfxType.congrats);
 
+    // Wait for the celebration to complete
     await Future<void>.delayed(_celebrationDuration);
     if (!mounted) return;
 
+    // Navigate to the "win" screen
     GoRouter.of(context).go('/play/won', extra: {'score': score});
   }
 }

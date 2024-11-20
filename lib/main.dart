@@ -4,7 +4,12 @@
 
 import 'dart:developer' as dev;
 
+import 'package:basic/Screens/FUNCTION/func_playerSetup.dart';
+import 'package:basic/game_internals/level_state.dart';
+import 'package:basic/models/hiveAccount.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'firebase_options.dart';
 import 'helpers/hive_helper.dart';
@@ -30,20 +35,16 @@ Future<List<String>> loadWordsFromFile(String filePath) async {
 
 Future<void> initializeHive() async {
   await HiveHelper.init();
-
-  if (HiveHelper.fourLetterWords.isEmpty &&
+  if (HiveHelper.fourLetterWordsBox.isEmpty &&
       HiveHelper.fiveLetterWordsBox.isEmpty &&
       HiveHelper.sixLetterWordsBox.isEmpty &&
       HiveHelper.sevenLetterWordsBox.isEmpty) {
     final fourLetterWords = await loadWordsFromFile('4_letter_words.txt');
     await HiveHelper.fourLetterWordsBox.addAll(fourLetterWords);
-
     final fiveLetterWords = await loadWordsFromFile('5_letter_words.txt');
     await HiveHelper.fiveLetterWordsBox.addAll(fiveLetterWords);
-
     final sixLetterWords = await loadWordsFromFile('6_letter_words.txt');
     await HiveHelper.sixLetterWordsBox.addAll(sixLetterWords);
-
     final sevenLetterWords = await loadWordsFromFile('7_letter_words.txt');
     await HiveHelper.sevenLetterWordsBox.addAll(sevenLetterWords);
   }
@@ -51,14 +52,12 @@ Future<void> initializeHive() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   try {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
   } catch (e) {
     dev.log('Firebase initialization error: $e');
   }
-
   // Basic logging setup.
   Logger.root.level = kDebugMode ? Level.FINE : Level.INFO;
   Logger.root.onRecord.listen((record) {
@@ -69,7 +68,6 @@ void main() async {
       name: record.loggerName,
     );
   });
-
   // Put game into full screen mode on mobile devices.
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   // Lock the game to portrait mode on mobile devices.
@@ -77,7 +75,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-
+  Hive.registerAdapter(HiveAccountAdapter());
   await initializeHive();
 
   runApp(MyApp());
@@ -91,10 +89,8 @@ class MyApp extends StatelessWidget {
       statusBarIconBrightness: Brightness.light,
       systemNavigationBarIconBrightness: Brightness.light,
     ));
-
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
-
   @override
   Widget build(BuildContext context) {
     return AppLifecycleObserver(
@@ -108,9 +104,8 @@ class MyApp extends StatelessWidget {
         providers: [
           Provider(create: (context) => SettingsController()),
           Provider(create: (context) => Palette()),
-          ChangeNotifierProvider(create: (context) => PlayerProgress()),
-          ChangeNotifierProvider(create: (_) => PlaySessionController()),
-
+          ChangeNotifierProvider(create: (_) => LevelState(onWin: () {})),
+          ChangeNotifierProvider(create: (_) => PlayerProgress()),
           // Set up audio.
           ProxyProvider2<AppLifecycleStateNotifier, SettingsController,
               AudioController>(
@@ -126,7 +121,6 @@ class MyApp extends StatelessWidget {
         ],
         child: Builder(builder: (context) {
           final palette = context.watch<Palette>();
-
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'My Flutter Game',

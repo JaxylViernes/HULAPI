@@ -1,7 +1,7 @@
+import 'package:basic/utils/responsive.dart';
 import '../helpers/app_init.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-
 import 'cust_fontstyle.dart';
 
 class DialogHelper with Application {
@@ -9,11 +9,10 @@ class DialogHelper with Application {
   static Future<void> showValidationDialog(
       BuildContext context, String title, String subtitle) {
     bool isDialogClosed = false;
-
     final dialog = AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular(10),
+          Radius.circular(setResponsiveSize(context, baseSize: 10)),
         ),
       ),
       backgroundColor: AppColor().white,
@@ -29,8 +28,10 @@ class DialogHelper with Application {
                 decoration: BoxDecoration(
                   color: AppColor().warning,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
+                    topLeft: Radius.circular(
+                        setResponsiveSize(context, baseSize: 10)),
+                    topRight: Radius.circular(
+                        setResponsiveSize(context, baseSize: 10)),
                   ),
                 ),
                 child: Padding(
@@ -43,8 +44,8 @@ class DialogHelper with Application {
                 ),
               ),
               Positioned(
-                right: 10,
-                top: 10,
+                right: setResponsiveSize(context, baseSize: 10),
+                top: setResponsiveSize(context, baseSize: 10),
                 child: GestureDetector(
                   onTap: () {
                     if (!isDialogClosed) {
@@ -75,14 +76,15 @@ class DialogHelper with Application {
             padding: EdgeInsets.symmetric(vertical: 35, horizontal: 40),
             decoration: BoxDecoration(
               color: AppColor().white,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                  setResponsiveSize(context, baseSize: 10)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustFontstyle(
                     label: title, fontsize: 20, fontweight: FontWeight.w600),
-                Gap(10),
+                Gap(setResponsiveSize(context, baseSize: 10)),
                 CustFontstyle(
                     label: subtitle,
                     fontalign: TextAlign.center,
@@ -94,13 +96,6 @@ class DialogHelper with Application {
         ],
       ),
     );
-
-    Future.delayed(Duration(milliseconds: 2000), () {
-      if (!isDialogClosed) {
-        Navigator.of(context).pop();
-        isDialogClosed = true;
-      }
-    });
 
     return showDialog(
       context: context,
@@ -115,13 +110,17 @@ class DialogHelper with Application {
     final dialog = AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular((10)),
+          Radius.circular((setResponsiveSize(context, baseSize: 10))),
         ),
       ),
       backgroundColor: AppColor().white,
       contentPadding: EdgeInsets.zero,
-      content: SizedBox(
-        width: (300),
+      content: Container(
+        decoration: BoxDecoration(
+          borderRadius:
+              BorderRadius.circular(setResponsiveSize(context, baseSize: 10)),
+        ),
+        width: (400),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -133,8 +132,10 @@ class DialogHelper with Application {
                   decoration: BoxDecoration(
                     color: AppColor().invalid,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
+                      topRight: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
                     ),
                   ),
                   child: Padding(
@@ -147,8 +148,8 @@ class DialogHelper with Application {
                   ),
                 ),
                 Positioned(
-                  right: 10,
-                  top: 10,
+                  right: setResponsiveSize(context, baseSize: 10),
+                  top: setResponsiveSize(context, baseSize: 10),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
@@ -175,37 +176,101 @@ class DialogHelper with Application {
               ],
             ),
             Container(
-              color: AppColor().white,
-              padding: EdgeInsets.symmetric(vertical: (10), horizontal: (35)),
+              decoration: BoxDecoration(
+                color: AppColor().white,
+                borderRadius: BorderRadius.circular(
+                    setResponsiveSize(context, baseSize: 10)),
+              ),
+              padding: EdgeInsets.symmetric(vertical: (20), horizontal: (35)),
               child: Column(
                 children: [
                   CustFontstyle(
                       label: 'Tapos na ang laro',
-                      fontsize: 18,
+                      fontsize: 20,
                       fontweight: FontWeight.w600),
-                  Gap((5)),
+                  Gap(setResponsiveSize(context, baseSize: 5)),
                   CustFontstyle(
-                      label: 'GG! Ang tamang sagot ay',
+                      label: 'GG! Ang tamang sagot ay:',
                       fontalign: TextAlign.center,
-                      fontsize: 15,
+                      fontsize: 16,
                       fontweight: FontWeight.w400),
-                  Gap((10)),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: AppColor().valid, width: 2),
-                    ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: setResponsiveSize(context, baseSize: 15)),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 12),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 15),
                       child: CustFontstyle(
-                        label: randWord,
-                        fontcolor: AppColor().darkGrey,
+                        label: randWord.toUpperCase(),
+                        fontcolor: AppColor().valid,
                         fontalign: TextAlign.center,
-                        fontsize: 16,
-                        fontweight: FontWeight.w500,
+                        fontsize: 23,
+                        fontweight: FontWeight.w800,
                       ),
                     ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  setResponsiveSize(context, baseSize: 18),
+                              vertical:
+                                  (setResponsiveSize(context, baseSize: 10))),
+                          backgroundColor: AppColor().valid,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        },
+                        child: Icon(Icons.home, color: AppColor().white),
+                      ),
+                      Gap(25),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  setResponsiveSize(context, baseSize: 18),
+                              vertical:
+                                  (setResponsiveSize(context, baseSize: 10))),
+                          backgroundColor: AppColor().valid,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          onRepeat();
+                        },
+                        child: Icon(Icons.restart_alt, color: AppColor().white),
+                      ),
+                      Gap(25),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  setResponsiveSize(context, baseSize: 18),
+                              vertical:
+                                  (setResponsiveSize(context, baseSize: 10))),
+                          backgroundColor: AppColor().valid,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          onRepeat();
+                        },
+                        child: Icon(Icons.settings, color: AppColor().white),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -213,70 +278,31 @@ class DialogHelper with Application {
           ],
         ),
       ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: (18), vertical: (10)),
-                backgroundColor: AppColor().valid,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: CustFontstyle(
-                label: 'Bumalik',
-                fontsize: 15,
-                fontweight: FontWeight.w600,
-                fontcolor: AppColor().white,
-              ),
-            ),
-            const Gap(25),
-            TextButton(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: (18), vertical: (10)),
-                backgroundColor: AppColor().valid,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                onRepeat();
-              },
-              child: CustFontstyle(
-                label: 'Ulitin',
-                fontsize: 15,
-                fontweight: FontWeight.w600,
-                fontcolor: AppColor().white,
-              ),
-            ),
-          ],
-        ),
-      ],
     );
-    return showDialog(context: context, builder: (_) => dialog);
+    return showDialog(
+      context: context,
+      builder: (_) => dialog,
+      barrierDismissible: false,
+    );
   }
 
-  // #RESET SYSTEM
-  static Future<void> showResetDialog(
-      BuildContext context, String title, String subtitle, Function() onReset) {
+// #PAUSE DIALOG
+  static Future<void> showPauseOverDialog(BuildContext context, String randWord,
+      Function() onRepeat, Function() onReset) {
     final dialog = AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular((10)),
+          Radius.circular((setResponsiveSize(context, baseSize: 10))),
         ),
       ),
       backgroundColor: AppColor().white,
       contentPadding: EdgeInsets.zero,
-      content: SizedBox(
-        width: (300),
+      content: Container(
+        decoration: BoxDecoration(
+          borderRadius:
+              BorderRadius.circular(setResponsiveSize(context, baseSize: 10)),
+        ),
+        width: (400),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -286,24 +312,30 @@ class DialogHelper with Application {
                   width: double.infinity,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: AppColor().invalid,
+                    color: AppColor().valid,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
+                      topRight: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
                     ),
                   ),
-                  child: Icon(
-                    Icons.warning_rounded,
-                    size: 80,
-                    color: AppColor().white,
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Image.asset(
+                      AppImage().valid,
+                      fit: BoxFit.contain,
+                      scale: 5,
+                    ),
                   ),
                 ),
                 Positioned(
-                  right: 10,
-                  top: 10,
+                  right: setResponsiveSize(context, baseSize: 10),
+                  top: setResponsiveSize(context, baseSize: 10),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
+                      onRepeat();
                     },
                     child: Container(
                       height: 30,
@@ -325,11 +357,173 @@ class DialogHelper with Application {
               ],
             ),
             Container(
-              color: AppColor().white,
-              padding: EdgeInsets.symmetric(vertical: (15), horizontal: (35)),
+              decoration: BoxDecoration(
+                color: AppColor().white,
+                borderRadius: BorderRadius.circular(
+                    setResponsiveSize(context, baseSize: 10)),
+              ),
+              padding: EdgeInsets.symmetric(vertical: (20), horizontal: (35)),
               child: Column(
                 children: [
-                  Gap((10)),
+                  CustFontstyle(
+                      label: 'Ihinto ang laro',
+                      fontsize: 20,
+                      fontweight: FontWeight.w600),
+                  Gap(setResponsiveSize(context, baseSize: 5)),
+                  CustFontstyle(
+                      label: 'Pahinga muna, balikan ang laro mamaya.',
+                      fontalign: TextAlign.center,
+                      fontsize: 16,
+                      fontweight: FontWeight.w400),
+                  Gap(setResponsiveSize(context, baseSize: 20)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  setResponsiveSize(context, baseSize: 18),
+                              vertical:
+                                  (setResponsiveSize(context, baseSize: 10))),
+                          backgroundColor: AppColor().valid,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        },
+                        child: Icon(Icons.home, color: AppColor().white),
+                      ),
+                      Gap(20),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  setResponsiveSize(context, baseSize: 20),
+                              vertical:
+                                  setResponsiveSize(context, baseSize: 15)),
+                          backgroundColor: AppColor().valid,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          onRepeat();
+                        },
+                        child: Icon(Icons.play_arrow_rounded,
+                            color: AppColor().white),
+                      ),
+                      Gap(20),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  setResponsiveSize(context, baseSize: 18),
+                              vertical:
+                                  (setResponsiveSize(context, baseSize: 10))),
+                          backgroundColor: AppColor().valid,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          onReset();
+                        },
+                        child: Icon(Icons.restart_alt, color: AppColor().white),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return showDialog(
+      context: context,
+      builder: (_) => dialog,
+      barrierDismissible: false,
+    );
+  }
+
+  // #RESET SYSTEM
+  static Future<void> showResetDialog(
+      BuildContext context, String title, String subtitle, Function() onReset) {
+    final dialog = AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(setResponsiveSize(context,
+              baseSize: setResponsiveSize(context, baseSize: 10))),
+        ),
+      ),
+      backgroundColor: AppColor().white,
+      contentPadding: EdgeInsets.zero,
+      content: SizedBox(
+        width: setResponsiveSize(context, baseSize: 300),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: setResponsiveSize(context, baseSize: 120),
+                  decoration: BoxDecoration(
+                    color: AppColor().invalid,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
+                      topRight: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.warning_rounded,
+                    size: setResponsiveSize(context, baseSize: 80),
+                    color: AppColor().white,
+                  ),
+                ),
+                Positioned(
+                  right: setResponsiveSize(context, baseSize: 10),
+                  top: setResponsiveSize(context, baseSize: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: setResponsiveSize(context, baseSize: 30),
+                      width: setResponsiveSize(context, baseSize: 30),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                            setResponsiveSize(context, baseSize: 5)),
+                        border: Border.all(color: AppColor().white, width: 2),
+                      ),
+                      child: Center(
+                        child: CustFontstyle(
+                          label: 'X',
+                          fontcolor: AppColor().white,
+                          fontweight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              color: AppColor().white,
+              padding: EdgeInsets.symmetric(
+                  vertical: setResponsiveSize(context), horizontal: (35)),
+              child: Column(
+                children: [
+                  Gap((setResponsiveSize(context, baseSize: 10))),
                   CustFontstyle(
                       label: title, fontsize: 18, fontweight: FontWeight.w600),
                   Gap((5)),
@@ -350,7 +544,9 @@ class DialogHelper with Application {
           children: [
             TextButton(
               style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: (18), vertical: (10)),
+                padding: EdgeInsets.symmetric(
+                    horizontal: setResponsiveSize(context, baseSize: 18),
+                    vertical: (setResponsiveSize(context, baseSize: 10))),
                 backgroundColor: AppColor().no,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
@@ -366,10 +562,12 @@ class DialogHelper with Application {
                 fontcolor: AppColor().white,
               ),
             ),
-            const Gap(25),
+            Gap(25),
             TextButton(
               style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: (18), vertical: (10)),
+                padding: EdgeInsets.symmetric(
+                    horizontal: setResponsiveSize(context, baseSize: 18),
+                    vertical: (setResponsiveSize(context, baseSize: 10))),
                 backgroundColor: AppColor().valid,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),

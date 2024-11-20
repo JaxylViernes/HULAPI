@@ -20,6 +20,11 @@ class AppImage {
   String get invalid => AppDirectory.img('img_sad.png');
   String get valid => AppDirectory.img('img_happy.png');
   String get back => AppDirectory.img('img_background.png');
+  String get START => AppDirectory.img('IMG_START.png');
+  String get SPLASH => AppDirectory.img('IMG_SPLASH.png');
+  String get SETUP => AppDirectory.img('IMG_SETUP.png');
+  String get BACK => AppDirectory.img('IMG_BACK.png');
+  String get LEVEL => AppDirectory.img('IMG_LEVEL.png');
 }
 
 class AppAvatar {
@@ -33,6 +38,7 @@ class AppAvatar {
 
 class AppColor {
   Color get darklight => const Color(0xFF5B5B5B);
+  Color get black => const Color(0xFF000000);
 
   Color get dark => const Color(0xFF333333);
   Color get darkGrey => const Color(0xFF808080);
@@ -40,8 +46,9 @@ class AppColor {
   Color get valid => const Color(0xFF6AAA64);
   Color get warning => const Color(0xFFC9B558);
   Color get invalid => const Color(0xFFFF7951);
-  Color get blue => const Color(0xFF0175C2);
+  Color get blue => const Color(0xFF78B3CE);
   Color get white => const Color(0xFFFFFFFF);
   Color get yes => const Color(0xFF99E661);
   Color get no => const Color(0xFFFF8F91);
+  Color get yellow => const Color(0xFFFFC500);
 }
