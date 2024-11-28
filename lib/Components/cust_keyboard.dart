@@ -1,4 +1,5 @@
 import 'package:basic/helpers/app_init.dart';
+import 'package:basic/utils/responsive.dart';
 import 'package:flutter/material.dart';
 
 class CustKeyboard extends StatelessWidget {
@@ -12,10 +13,12 @@ class CustKeyboard extends StatelessWidget {
       elevation: 2,
       color: color ?? Application().color.dark,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius:
+            BorderRadius.circular(setResponsiveSize(context, baseSize: 5)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+        padding: EdgeInsets.symmetric(
+            vertical: setResponsiveSize(context, baseSize: 18), horizontal: 12),
         child: children,
       ),
     );

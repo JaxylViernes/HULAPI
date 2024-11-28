@@ -453,6 +453,196 @@ class DialogHelper with Application {
     );
   }
 
+//SHOW WIN DIALOG
+  static Future<void> showWonDialog(
+      BuildContext context,
+      String randWord,
+      String title,
+      String subtitle,
+      Function() onNext,
+      Function() onReset,
+      Function() onHome) {
+    final dialog = AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular((setResponsiveSize(context, baseSize: 10))),
+        ),
+      ),
+      backgroundColor: AppColor().white,
+      contentPadding: EdgeInsets.zero,
+      content: Container(
+        decoration: BoxDecoration(
+          borderRadius:
+              BorderRadius.circular(setResponsiveSize(context, baseSize: 10)),
+        ),
+        width: (400),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppColor().valid,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
+                      topRight: Radius.circular(
+                          setResponsiveSize(context, baseSize: 10)),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Image.asset(
+                      AppImage().valid,
+                      fit: BoxFit.contain,
+                      scale: 5,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: setResponsiveSize(context, baseSize: 10),
+                  top: setResponsiveSize(context, baseSize: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      onNext();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: AppColor().white, width: 2),
+                      ),
+                      child: Center(
+                        child: CustFontstyle(
+                          label: 'X',
+                          fontcolor: AppColor().white,
+                          fontweight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: AppColor().white,
+                borderRadius: BorderRadius.circular(
+                    setResponsiveSize(context, baseSize: 10)),
+              ),
+              padding: EdgeInsets.symmetric(vertical: (20), horizontal: (35)),
+              child: Column(
+                children: [
+                  CustFontstyle(
+                      label: title, fontsize: 20, fontweight: FontWeight.w600),
+                  Gap(setResponsiveSize(context, baseSize: 5)),
+                  CustFontstyle(
+                      label: subtitle,
+                      fontalign: TextAlign.center,
+                      fontsize: 16,
+                      fontweight: FontWeight.w400),
+                  Gap(setResponsiveSize(context, baseSize: 20)),
+                  randWord.length == 7
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: setResponsiveSize(context,
+                                        baseSize: 18),
+                                    vertical: (setResponsiveSize(context,
+                                        baseSize: 10))),
+                                backgroundColor: AppColor().valid,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: onHome,
+                              child: Icon(Icons.home, color: AppColor().white),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: setResponsiveSize(context,
+                                        baseSize: 18),
+                                    vertical: (setResponsiveSize(context,
+                                        baseSize: 10))),
+                                backgroundColor: AppColor().valid,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: onHome,
+                              child: Icon(Icons.home, color: AppColor().white),
+                            ),
+                            Gap(20),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: setResponsiveSize(context,
+                                        baseSize: 20),
+                                    vertical: setResponsiveSize(context,
+                                        baseSize: 15)),
+                                backgroundColor: AppColor().valid,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                onNext();
+                              },
+                              child:
+                                  Icon(Icons.forward, color: AppColor().white),
+                            ),
+                            Gap(20),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: setResponsiveSize(context,
+                                        baseSize: 18),
+                                    vertical: (setResponsiveSize(context,
+                                        baseSize: 10))),
+                                backgroundColor: AppColor().valid,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                onReset();
+                              },
+                              child: Icon(Icons.restart_alt,
+                                  color: AppColor().white),
+                            ),
+                          ],
+                        )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return showDialog(
+      context: context,
+      builder: (_) => dialog,
+      barrierDismissible: false,
+    );
+  }
+
   // #RESET SYSTEM
   static Future<void> showResetDialog(
       BuildContext context, String title, String subtitle, Function() onReset) {

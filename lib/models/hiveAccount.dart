@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-part 'hiveAccount.g.dart'; // This will generate a file for Hive type adapter
+part 'hiveAccount.g.dart';
 
 @HiveType(typeId: 0)
 class HiveAccount {
@@ -14,7 +13,24 @@ class HiveAccount {
   @HiveField(2)
   int score;
 
-  HiveAccount({required this.name, required this.avatar, required this.score});
-}
+  @HiveField(3)
+  int tagalogScore;
 
-  // Other methods...
+  @HiveField(4)
+  int bisayaScore;
+
+  @HiveField(5)
+  int tagalogLevel;
+
+  @HiveField(6)
+  int bisayaLevel;
+
+  HiveAccount(
+      {required this.name,
+      required this.avatar,
+      required this.score,
+      required this.tagalogLevel,
+      required this.tagalogScore,
+      required this.bisayaLevel,
+      required this.bisayaScore});
+}

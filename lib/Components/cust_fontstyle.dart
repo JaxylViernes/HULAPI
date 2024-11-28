@@ -9,6 +9,8 @@ class CustFontstyle extends StatelessWidget {
   final Color? fontcolor;
   final TextAlign? fontalign;
 
+  final TextDecoration? fontDecoration;
+
   const CustFontstyle({
     super.key,
     this.label,
@@ -17,6 +19,7 @@ class CustFontstyle extends StatelessWidget {
     this.fontweight,
     this.fontcolor,
     this.fontalign,
+    this.fontDecoration,
   });
 
   @override
@@ -29,6 +32,7 @@ class CustFontstyle extends StatelessWidget {
         fontWeight: fontweight,
         color: fontcolor,
         letterSpacing: fontspace,
+        decoration: fontDecoration,
       ),
     );
   }
@@ -42,6 +46,8 @@ class CustTimeNewRoman extends StatelessWidget {
   final Color? fontcolor;
   final TextAlign? fontalign;
 
+  final TextDecoration? fontDecoration;
+
   const CustTimeNewRoman({
     super.key,
     this.label,
@@ -50,6 +56,7 @@ class CustTimeNewRoman extends StatelessWidget {
     this.fontweight,
     this.fontcolor,
     this.fontalign,
+    this.fontDecoration,
   });
 
   @override
@@ -62,6 +69,7 @@ class CustTimeNewRoman extends StatelessWidget {
         fontWeight: fontweight,
         color: fontcolor,
         letterSpacing: fontspace,
+        decoration: fontDecoration,
       ),
     );
   }

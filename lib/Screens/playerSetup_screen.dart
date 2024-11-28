@@ -1,5 +1,6 @@
 import 'package:basic/Components/cust_fontstyle.dart';
 import 'package:basic/helpers/app_init.dart';
+import 'package:basic/models/playerData.dart';
 import 'package:basic/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -62,7 +63,17 @@ class _PlayersetupScreenState extends State<PlayersetupScreen> {
                           Gap(setResponsiveSize(context, baseSize: 100)),
                           ElevatedButton(
                             onPressed: () {
-                              viewModel.startGame(context);
+                              // Create a Player object with the entered name and default avatar/image
+                              Player player = Player(
+                                name: viewModel.nameController.text,
+                                image: viewModel.avatarImages[
+                                    viewModel.selectedAvatarIndex],
+                                level: 1,
+                                score: 0,
+                              );
+
+                              // Proceed to start the game by passing context and player
+                              viewModel.startGame(context, player);
                             },
                             style: ButtonStyle(
                               padding:
@@ -88,7 +99,7 @@ class _PlayersetupScreenState extends State<PlayersetupScreen> {
                               fontcolor: AppColor().black,
                               fontweight: FontWeight.bold,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -104,32 +115,33 @@ class _PlayersetupScreenState extends State<PlayersetupScreen> {
 
   Widget _buildNameInputField(PlayerSetupViewModel viewModel) {
     return TextField(
-        textAlign: TextAlign.center,
-        controller: viewModel.nameController,
-        decoration: InputDecoration(
-          hintText: 'Pangalan',
-          hintStyle: TextStyle(
-            color: AppColor().darkGrey.withOpacity(0.8),
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-          labelStyle: TextStyle(
-            color: AppColor().dark,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-          filled: true,
-          fillColor: AppColor().white,
-          border: viewModel.borderCust,
-          enabledBorder: viewModel.borderCust,
-          focusedBorder: viewModel.borderCust,
-          contentPadding: const EdgeInsets.all(15),
-        ),
-        style: TextStyle(
-          color: AppColor().dark,
-          fontSize: 20,
+      textAlign: TextAlign.center,
+      controller: viewModel.nameController,
+      decoration: InputDecoration(
+        hintText: 'Pangalan',
+        hintStyle: TextStyle(
+          color: AppColor().darkGrey.withOpacity(0.8),
+          fontSize: 17,
           fontWeight: FontWeight.w600,
-        ));
+        ),
+        labelStyle: TextStyle(
+          color: AppColor().dark,
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+        ),
+        filled: true,
+        fillColor: AppColor().white,
+        border: viewModel.borderCust,
+        enabledBorder: viewModel.borderCust,
+        focusedBorder: viewModel.borderCust,
+        contentPadding: const EdgeInsets.all(15),
+      ),
+      style: TextStyle(
+        color: AppColor().dark,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+    );
   }
 
   Widget _buildAvatarRow(PlayerSetupViewModel viewModel) {

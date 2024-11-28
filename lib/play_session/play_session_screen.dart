@@ -21,18 +21,21 @@ import 'FUNCT/play_session_controller.dart';
 class PlaySessionScreen extends StatefulWidget {
   final GameLevel level;
   final String playerId;
-  const PlaySessionScreen(this.level, this.playerId, {super.key});
+  final String language;
+  const PlaySessionScreen(this.level, this.playerId, this.language,
+      {super.key});
+
   @override
   State<PlaySessionScreen> createState() => _PlaySessionScreenState();
 }
 
-class _PlaySessionScreenState extends State<PlaySessionScreen>
-    with Application {
+class _PlaySessionScreenState extends State<PlaySessionScreen> {
   static final _log = Logger('PlaySessionScreen');
   static const _celebrationDuration = Duration(milliseconds: 2000);
   static const _preCelebrationDuration = Duration(milliseconds: 500);
   bool _duringCelebration = false;
   late DateTime _startOfPlay;
+
   @override
   void initState() {
     super.initState();
@@ -40,29 +43,26 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => PlaySessionController(),
+      create: (context) => PlaySessionController(dialect: widget.language),
       child: Consumer<PlaySessionController>(
         builder: (context, playSessionController, child) {
           return Scaffold(
             appBar: AppBar(
               elevation: 5,
-              leading: Builder(
-                builder: (BuildContext context) {
-                  return IconButton(
-                    icon: Icon(Icons.menu),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  );
-                },
-              ),
               iconTheme: IconThemeData(color: AppColor().white),
-              backgroundColor: Application().color.blue,
+              backgroundColor: playSessionController.showRedScreen
+                  ? Colors.red
+                  : widget.level.number == 1
+                      ? Application().color.blue
+                      : widget.level.number == 2
+                          ? Application().color.valid
+                          : widget.level.number == 3
+                              ? Application().color.warning
+                              : widget.level.number == 4
+                                  ? Application().color.invalid
+                                  : Application().color.invalid,
               title: CustFontstyle(
                 label: 'ANTAS ${widget.level.number}',
                 fontcolor: AppColor().white,
@@ -73,7 +73,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
               centerTitle: true,
               actions: [
                 InkWell(
-                  onTap: () => GoRouter.of(context).push('/settings'),
+                  onTap: () => GoRouter.of(context).push('/leaderboards'),
                   child: Icon(Icons.leaderboard_outlined),
                 ),
                 Padding(
@@ -90,16 +90,6 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
                 const Gap(20),
               ],
             ),
-            drawer: CustomDrawer(
-              avatarUrl: playSessionController.avatarUrl,
-              onBackPressed: () {
-                Navigator.pop(context);
-              },
-              onQuitPressed: () {
-                Navigator.pop(context);
-              },
-              playerName: playSessionController.playerName,
-            ),
             backgroundColor: AppColor().white,
             body: Stack(
               children: [
@@ -110,12 +100,23 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
                     opacity: 0.5,
                     duration: Duration(milliseconds: 500),
                     child: Image.asset(
-                      Application().image.BACK,
+                      widget.level.number == 1
+                          ? Application().image.BACK1
+                          : widget.level.number == 2
+                              ? Application().image.BACK2
+                              : widget.level.number == 3
+                                  ? Application().image.BACK3
+                                  : widget.level.number == 4
+                                      ? Application().image.BACK4
+                                      : Application().image.BACK4,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                GameWidget(letterCount: widget.level.number),
+                GameWidget(
+                  letterCount: widget.level.number,
+                  language: widget.language,
+                ),
                 SizedBox.expand(
                   child: Visibility(
                     visible: _duringCelebration,
@@ -126,7 +127,25 @@ class _PlaySessionScreenState extends State<PlaySessionScreen>
                     ),
                   ),
                 ),
-                // Display player information
+                if (playSessionController.showRedScreen) // Red screen effect
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: Alignment.center,
+                            radius: 0.8,
+                            colors: [
+                              Colors.transparent, // Center is transparent
+                              Colors.red.withOpacity(
+                                  0.7), // Red shadow on the corners
+                            ],
+                            stops: [0.2, 5],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           );

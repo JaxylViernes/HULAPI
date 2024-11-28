@@ -1,50 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'hiveAccount.dart';
+part of 'playerData.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class HiveAccountAdapter extends TypeAdapter<HiveAccount> {
+class PlayerAdapter extends TypeAdapter<Player> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  HiveAccount read(BinaryReader reader) {
+  Player read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return HiveAccount(
+    return Player(
       name: fields[0] as String,
-      avatar: fields[1] as String,
-      score: fields[2] as int,
-      tagalogLevel: fields[5] as int,
-      tagalogScore: fields[3] as int,
-      bisayaLevel: fields[6] as int,
-      bisayaScore: fields[4] as int,
+      image: fields[2] as String,
+      level: fields[3] as int,
+      score: fields[4] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, HiveAccount obj) {
+  void write(BinaryWriter writer, Player obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.avatar)
       ..writeByte(2)
-      ..write(obj.score)
+      ..write(obj.image)
       ..writeByte(3)
-      ..write(obj.tagalogScore)
+      ..write(obj.level)
       ..writeByte(4)
-      ..write(obj.bisayaScore)
-      ..writeByte(5)
-      ..write(obj.tagalogLevel)
-      ..writeByte(6)
-      ..write(obj.bisayaLevel);
+      ..write(obj.score);
   }
 
   @override
@@ -53,7 +44,7 @@ class HiveAccountAdapter extends TypeAdapter<HiveAccount> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HiveAccountAdapter &&
+      other is PlayerAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

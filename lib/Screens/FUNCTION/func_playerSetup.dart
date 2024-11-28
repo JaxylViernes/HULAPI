@@ -2,20 +2,23 @@ import 'dart:io';
 
 import 'package:basic/helpers/app_init.dart';
 import 'package:basic/models/hiveAccount.dart';
+import 'package:basic/models/playerData.dart';
+import 'package:basic/utils/connectivity.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PlayerSetupViewModel extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final PageController pageController = PageController(viewportFraction: 0.3);
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   int selectedAvatarIndex = 0;
   int playerScore = 0; // Default score, modify as needed
 
-  final FirebaseFirestore _firestore =
-      FirebaseFirestore.instance; // Firestore instance
   final List<String> avatarImages = [
     Application().avatar.avatar1,
     Application().avatar.avatar2,
@@ -56,48 +59,73 @@ class PlayerSetupViewModel extends ChangeNotifier {
     return deviceId;
   }
 
-  Future<String?> savePlayerData() async {
-    String playerName = nameController.text;
-    String playerAvatar = avatarImages[selectedAvatarIndex];
-    // Save data in Firestore
-    try {
-      // Get the device ID
-      String deviceId = await getDeviceId();
-
-      // Open the Hive box to store player data
-      var box = await Hive.openBox<HiveAccount>('players');
-
-      // Create a new player object with the given details
-      var playerModel = HiveAccount(
-        name: playerName,
-        avatar: playerAvatar,
-        score: 0,
-      );
-
-      // Store the player data using the device ID as key
-      await box.put(deviceId, playerModel);
-
-      print("Player score saved locally in Hive");
-
-      return deviceId;
-    } catch (error) {
-      // Improved error handling
-      print("Failed to save data: $error");
-      throw Exception(
-          "Error saving player score: $error"); // Throwing exception for better tracking
-    }
-  }
-
-  // Function to call when the start button is pressed
-  void startGame(BuildContext context) async {
+  Future<void> startGame(BuildContext context, Player player) async {
     if (validateName(context)) {
-      String? playerId =
-          await savePlayerData(); // Save to Firestore and get player ID
-      if (playerId != null) {
-        print("Player passed the data successfully! Player ID: $playerId");
-        // Pass the player ID to the PlaySessionController or next screen
-        GoRouter.of(context).push('/play',
-            extra: playerId); // Navigate to the play screen with player ID
+      bool isConnected = await checkInternetConnection();
+
+      try {
+        String deviceId = await getDeviceId();
+        if (isConnected) {
+          // Save to Firestore
+          await _firestore.collection('hulapi_player').doc(deviceId).set({
+            'name': player.name,
+            'image': player.image,
+            'score': player.score,
+            'tagalogLevel': 0,
+            'bisayaLevel': 0,
+            'tagalogScore': 0,
+            'bisayaScore': 0,
+          });
+          print('Player data saved to Firestore.');
+
+          // Open the Hive box to store player data
+        }
+
+        var box = await Hive.openBox<HiveAccount>('players');
+
+        // Create a new player object with the given details
+        var playerModel = HiveAccount(
+          name: player.name,
+          avatar: player.image,
+          tagalogLevel: 0,
+          bisayaLevel: 0,
+          tagalogScore: 0,
+          bisayaScore: 0,
+          score: 0,
+        );
+
+        // Store the player data using the device ID as key
+        await box.put(deviceId, playerModel);
+
+        print("Player score saved locally in Hive");
+
+        // Success notification
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Player data saved successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate to play screen
+        GoRouter.of(context).push('/categories');
+      } catch (e) {
+        // Error handling
+        print('Error saving player data: $e');
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Error"),
+            content: const Text(
+                "An error occurred while saving your data. Please try again."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
       }
     }
   }

@@ -22,9 +22,15 @@ class AppImage {
   String get back => AppDirectory.img('img_background.png');
   String get START => AppDirectory.img('IMG_START.png');
   String get SPLASH => AppDirectory.img('IMG_SPLASH.png');
+  String get CATEGORY => AppDirectory.img('IMG_CATEGORY.png');
+  String get TROPE => AppDirectory.img('IMG_TROPE.png');
+
   String get SETUP => AppDirectory.img('IMG_SETUP.png');
-  String get BACK => AppDirectory.img('IMG_BACK.png');
   String get LEVEL => AppDirectory.img('IMG_LEVEL.png');
+  String get BACK1 => AppDirectory.img('IMG_BACK1.png');
+  String get BACK2 => AppDirectory.img('IMG_BACK2.png');
+  String get BACK3 => AppDirectory.img('IMG_BACK3.png');
+  String get BACK4 => AppDirectory.img('IMG_BACK4.png');
 }
 
 class AppAvatar {

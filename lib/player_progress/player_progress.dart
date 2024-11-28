@@ -4,13 +4,22 @@
 
 import 'dart:async';
 
+import 'package:basic/models/hiveAccount.dart';
+import 'package:basic/utils/connectivity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 
 import 'persistence/local_storage_player_progress_persistence.dart';
 import 'persistence/player_progress_persistence.dart';
 
 /// Encapsulates the player's progress.
 class PlayerProgress extends ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+
+
   static const maxHighestScoresPerPlayer = 10;
 
   /// By default, settings are persisted using

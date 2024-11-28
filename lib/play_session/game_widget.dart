@@ -4,6 +4,7 @@ import 'package:basic/Components/cust_alertdialog.dart';
 import 'package:basic/game_internals/level_state.dart';
 import 'package:basic/helpers/app_init.dart';
 import 'package:basic/models/hiveAccount.dart';
+import 'package:basic/play_session/FUNCT/play_session_controller.dart';
 import 'package:basic/utils/responsive.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import '../Components/cust_fontstyle.dart';
@@ -22,8 +23,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class GameWidget extends StatefulWidget {
-  const GameWidget({super.key, required this.letterCount});
+  const GameWidget(
+      {super.key, required this.letterCount, required this.language});
   final int letterCount;
+  final String language;
   @override
   State<GameWidget> createState() => _GameWidgetState();
 }
@@ -42,11 +45,12 @@ class _GameWidgetState extends State<GameWidget>
   bool isWordCorrect = false;
   Map<String, Color> keyColors = {};
   Timer? _timer;
-  int _start = 300;
+  int _start = 180;
   bool hintUsed = false;
   String wordMeaning = '';
   bool _isPaused = false;
   int score = 100; // Initialize base score
+  final bool _showRedScreen = false;
 
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
@@ -55,7 +59,7 @@ class _GameWidgetState extends State<GameWidget>
   void initState() {
     super.initState();
     totalLetters = 3 + widget.letterCount;
-    wordsBox = _getWordsBox(totalLetters);
+    wordsBox = _getWordsBox(totalLetters, widget.language);
     randomWord = HiveHelper.randomWord(totalLetters, wordsBox).trim();
     rows = List.generate(
         6,
@@ -77,6 +81,7 @@ class _GameWidgetState extends State<GameWidget>
           parent: _shakeController,
           curve: Curves.fastOutSlowIn), // Irregular curve
     );
+    print('SAGOT: ${randomWord}');
   }
 
   void _useHint() {
@@ -98,13 +103,27 @@ class _GameWidgetState extends State<GameWidget>
     setState(() {});
   }
 
-  Box _getWordsBox(int letterCount) => letterCount == 4
-      ? HiveHelper.fourLetterWordsBox
-      : letterCount == 5
-          ? HiveHelper.fiveLetterWordsBox
-          : letterCount == 6
-              ? HiveHelper.sixLetterWordsBox
-              : HiveHelper.sevenLetterWordsBox;
+  Box _getWordsBox(int letterCount, String language) {
+    if (language == 'Cebuano') {
+      return letterCount == 4
+          ? HiveHelper.cebuanofourLetterWordsBox
+          : letterCount == 5
+              ? HiveHelper.cebuanofiveLetterWordsBox
+              : letterCount == 6
+                  ? HiveHelper.cebuanosixLetterWordsBox
+                  : HiveHelper.cebuanosevenLetterWordsBox;
+    } else {
+      // Default to Tagalog or another language
+      return letterCount == 4
+          ? HiveHelper.fourLetterWordsBox
+          : letterCount == 5
+              ? HiveHelper.fiveLetterWordsBox
+              : letterCount == 6
+                  ? HiveHelper.sixLetterWordsBox
+                  : HiveHelper.sevenLetterWordsBox;
+    }
+  }
+
   String _getCurrentWord() =>
       rows[currentRow].map((letter) => letter.letter).join();
 
@@ -158,7 +177,7 @@ class _GameWidgetState extends State<GameWidget>
           context.read<AudioController>().playSfx(SfxType.wssh);
           context.read<LevelState>().evaluate();
 
-          // Add bonus points based on time taken to guess
+          // Add bonus points based on time taken
           if (_start <= 10) {
             score += 5; // Bonus for guessing within 10 seconds
           } else if (_start <= 20) {
@@ -170,9 +189,38 @@ class _GameWidgetState extends State<GameWidget>
           Future.delayed(Duration(milliseconds: 600), () {
             _timer?.cancel();
             addScoreToPlayer(score);
-            DialogHelper.showValidationDialog(context, 'Congratulations!',
-                'You guessed the word! Your score is: $score');
-            // You can also add additional logic here, such as navigating to a new screen or updating the game state
+            print("Total number of letters: $totalLetters");
+
+            // Determine if the level is complete
+            bool isLevelComplete = totalLetters == 7;
+
+            // Update player's progress
+            PlaySessionController(dialect: widget.language).updateScoreAndLevel(
+                score, widget.letterCount, isLevelComplete);
+
+            DialogHelper.showWonDialog(
+              context,
+              randomWord,
+              'Tagumpay!',
+              randomWord.length == 7
+                  ? 'Nakumpleto mo na ang bawat antas'
+                  : 'Nahulaan mo ang tamang sagot: puntos $score',
+              //go next
+              () {
+                GoRouter.of(context)
+                    .push('/play/session/${widget.letterCount + 1}');
+              },
+              //reset btn
+              () {
+                GoRouter.of(context)
+                    .push('/play/session/${widget.letterCount}');
+              },
+              //home btn
+              () {
+                // GoRouter.of(context).push('/play/session');
+                Navigator.of(context).pop();
+              },
+            );
           });
         } else if (currentRow == 6 || _start == 0) {
           Future.delayed(Duration(milliseconds: 600), () {
@@ -201,25 +249,24 @@ class _GameWidgetState extends State<GameWidget>
       } else {
         setState(() {
           _start--;
+          // Show red screen effect at 10 seconds left
+          if (_start <= 10) {
+            // Access PlaySessionController using Provider
+            Provider.of<PlaySessionController>(context, listen: false)
+                .toggleRedScreen();
+          }
         });
 
-        // Add bonus points if the word is guessed within a time frame
         if (_start == 10) {
-          // Add bonus points if guessed within 10 seconds
           score += 5;
         } else if (_start == 20) {
-          // Add bonus points if guessed within 20 seconds
           score += 3;
         } else if (_start == 30) {
-          // Add bonus points if guessed within 30 seconds
           score += 2;
         }
 
-        // Trigger shake animation when timer is near 30 seconds
-        if (_start <= 10) {
-          if (!_shakeController.isAnimating) {
-            _shakeController.forward();
-          }
+        if (_start <= 10 && !_shakeController.isAnimating) {
+          _shakeController.forward();
         }
       }
     });
@@ -238,33 +285,26 @@ class _GameWidgetState extends State<GameWidget>
 
   Future<String?> addScoreToPlayer(int additionalScore) async {
     try {
-      // Get the device ID (assuming you have a method to fetch this)
       String deviceId = await getDeviceId();
 
-      // Open the Hive box to retrieve player data
       var box = await Hive.openBox<HiveAccount>('players');
 
-      // Retrieve the player model from Hive using the device ID
       var playerModel = box.get(deviceId);
 
-      // If the player does not exist in Hive, return an error message
       if (playerModel == null) {
         return 'Player not found in local storage.';
       }
 
-      // Add the additional score to the current score
-      playerModel.score += additionalScore;
+      widget.language == "Tagalog"
+          ? playerModel.tagalogScore += additionalScore
+          : playerModel.bisayaScore += additionalScore;
 
-      // Save the updated player data back to Hive
       await box.put(deviceId, playerModel);
 
       // Print the updated score for verification
-      print(
-          'Updated score for player ${playerModel.name}: ${playerModel.score}');
 
       return 'Player score updated successfully';
     } catch (e) {
-      // If there's an error during updating data, handle it
       return 'Failed to update player score: $e';
     }
   }
@@ -310,7 +350,7 @@ class _GameWidgetState extends State<GameWidget>
           if (content is Map && content.containsKey('parts')) {
             final List<dynamic> parts = content['parts'] as List<dynamic>;
             if (parts.isNotEmpty) {
-              score -= 20;
+              score -= 10;
               final String wordMeaning = parts[0]['text'] as String;
               String tagalogMeaning = wordMeaning;
               WordMeaningProvider.cachedMeaning = tagalogMeaning;
@@ -385,6 +425,27 @@ class _GameWidgetState extends State<GameWidget>
                   Gap(setResponsiveSize(context, baseSize: 20)),
                   _buildKeyboard(),
                 ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Material(
+                  borderRadius: BorderRadius.circular(
+                      setResponsiveSize(context, baseSize: 7)),
+                  elevation: 3,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: setResponsiveSize(context, baseSize: 20),
+                        vertical: setResponsiveSize(context, baseSize: 7)),
+                    child: CustFontstyle(
+                      label: widget.language == 'Cebuano'
+                          ? "Bisaya"
+                          : "Tagalog".toString().toUpperCase(),
+                      fontsize: setResponsiveSize(context, baseSize: 16),
+                      fontweight: FontWeight.w600,
+                      fontcolor: Application().color.darkGrey,
+                    ),
+                  ),
+                ),
               ),
               Positioned(
                 top: setResponsiveSize(context, baseSize: 20),

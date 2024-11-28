@@ -26,7 +26,7 @@ class MainMenuScreen extends StatelessWidget {
       if (player != null) {
         print(
             'Player data from Hive: ${player.name}, ${player.avatar}, ${player.score}');
-        GoRouter.of(context).go('/play', extra: playerId);
+        GoRouter.of(context).go('/categories', extra: playerId);
       } else {
         // Handle case when player is null
         print("Player data is null in Hive!");
@@ -51,7 +51,7 @@ class MainMenuScreen extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
           ),
           Positioned(
-            bottom: setResponsiveSize(context, baseSize: 171),
+            bottom: setResponsiveSize(context, baseSize: 100),
             right: setResponsiveSize(context, baseSize: 60),
             left: setResponsiveSize(context, baseSize: 60),
             child: ElevatedButton(

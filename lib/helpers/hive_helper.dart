@@ -6,16 +6,32 @@ class HiveHelper {
   static const String fiveLetterWords = 'five_letter_words';
   static const String sixLetterWords = 'six_letter_words';
   static const String sevenLetterWords = 'seven_letter_words';
+
+  static const String cebuanofourLetterWords = 'cebuanofour_letter_words';
+  static const String cebuanofiveLetterWords = 'cebuanofive_letter_words';
+  static const String cebuanosixLetterWords = 'cebuanosix_letter_words';
+  static const String cebuanosevenLetterWords = 'cebuanoseven_letter_words';
+
   static late Box fourLetterWordsBox;
   static late Box fiveLetterWordsBox;
   static late Box sixLetterWordsBox;
   static late Box sevenLetterWordsBox;
+
+  static late Box cebuanofourLetterWordsBox;
+  static late Box cebuanofiveLetterWordsBox;
+  static late Box cebuanosixLetterWordsBox;
+  static late Box cebuanosevenLetterWordsBox;
   static Future<void> init() async {
     await Hive.initFlutter();
     fourLetterWordsBox = await Hive.openBox(fourLetterWords);
     fiveLetterWordsBox = await Hive.openBox(fiveLetterWords);
     sixLetterWordsBox = await Hive.openBox(sixLetterWords);
     sevenLetterWordsBox = await Hive.openBox(sevenLetterWords);
+
+    cebuanofourLetterWordsBox = await Hive.openBox(cebuanofourLetterWords);
+    cebuanofiveLetterWordsBox = await Hive.openBox(cebuanofiveLetterWords);
+    cebuanosixLetterWordsBox = await Hive.openBox(cebuanosixLetterWords);
+    cebuanosevenLetterWordsBox = await Hive.openBox(cebuanosevenLetterWords);
   }
 
   static bool isWord(String word, Box box) {

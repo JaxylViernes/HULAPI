@@ -3,14 +3,12 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:developer' as dev;
-
-import 'package:basic/Screens/FUNCTION/func_playerSetup.dart';
 import 'package:basic/game_internals/level_state.dart';
 import 'package:basic/models/hiveAccount.dart';
+import 'package:basic/models/playerData.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import 'firebase_options.dart';
 import 'helpers/hive_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -18,10 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-
 import 'app_lifecycle/app_lifecycle.dart';
 import 'audio/audio_controller.dart';
-import 'play_session/FUNCT/play_session_controller.dart';
 import 'player_progress/player_progress.dart';
 import 'router.dart';
 import 'settings/settings.dart';
@@ -38,7 +34,11 @@ Future<void> initializeHive() async {
   if (HiveHelper.fourLetterWordsBox.isEmpty &&
       HiveHelper.fiveLetterWordsBox.isEmpty &&
       HiveHelper.sixLetterWordsBox.isEmpty &&
-      HiveHelper.sevenLetterWordsBox.isEmpty) {
+      HiveHelper.sevenLetterWordsBox.isEmpty &&
+      HiveHelper.cebuanofourLetterWordsBox.isEmpty &&
+      HiveHelper.cebuanofiveLetterWordsBox.isEmpty &&
+      HiveHelper.cebuanosixLetterWordsBox.isEmpty &&
+      HiveHelper.cebuanosevenLetterWordsBox.isEmpty) {
     final fourLetterWords = await loadWordsFromFile('4_letter_words.txt');
     await HiveHelper.fourLetterWordsBox.addAll(fourLetterWords);
     final fiveLetterWords = await loadWordsFromFile('5_letter_words.txt');
@@ -47,6 +47,19 @@ Future<void> initializeHive() async {
     await HiveHelper.sixLetterWordsBox.addAll(sixLetterWords);
     final sevenLetterWords = await loadWordsFromFile('7_letter_words.txt');
     await HiveHelper.sevenLetterWordsBox.addAll(sevenLetterWords);
+
+    final cebuanofourLetterWords =
+        await loadWordsFromFile('cebuano_four_letter_words.txt');
+    await HiveHelper.cebuanofourLetterWordsBox.addAll(cebuanofourLetterWords);
+    final cebuanofiveLetterWords =
+        await loadWordsFromFile('cebuano_five_letter_words.txt');
+    await HiveHelper.cebuanofiveLetterWordsBox.addAll(cebuanofiveLetterWords);
+    final cebuanosixLetterWords =
+        await loadWordsFromFile('cebuano_six_letter_words.txt');
+    await HiveHelper.cebuanosixLetterWordsBox.addAll(cebuanosixLetterWords);
+    final cebuanosevenLetterWords =
+        await loadWordsFromFile('cebuano_seven_letter_words.txt');
+    await HiveHelper.cebuanosevenLetterWordsBox.addAll(cebuanosevenLetterWords);
   }
 }
 
@@ -76,6 +89,8 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   Hive.registerAdapter(HiveAccountAdapter());
+  Hive.registerAdapter(PlayerAdapter());
+
   await initializeHive();
 
   runApp(MyApp());
